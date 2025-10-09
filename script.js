@@ -53,6 +53,60 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('todoLists', JSON.stringify(lists));
     };
     
+    // Función auxiliar: Crear input de edición con estilos
+    const createEditInput = (value, styles = {}) => {
+        const editInput = document.createElement('input');
+        editInput.type = 'text';
+        editInput.value = value;
+        
+        const defaultStyles = {
+            background: 'transparent',
+            border: '2px solid #04fc57',
+            borderRadius: '8px',
+            color: 'white',
+            padding: '4px 8px',
+            fontSize: '1rem',
+            fontWeight: '500',
+            outline: 'none',
+            fontFamily: '"Jost", sans-serif',
+            ...styles
+        };
+        
+        editInput.style.cssText = Object.entries(defaultStyles)
+            .map(([key, value]) => `${key.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}: ${value}`)
+            .join('; ');
+        
+        return editInput;
+    };
+    
+    // Función auxiliar: Manejar eventos de edición (guardar/cancelar)
+    const handleEditInputEvents = (input, onSave, onCancel) => {
+        let isHandled = false;
+        
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !isHandled) {
+                e.preventDefault();
+                isHandled = true;
+                onSave();
+            }
+        });
+        
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !isHandled) {
+                e.preventDefault();
+                isHandled = true;
+                onCancel();
+            }
+        });
+        
+        input.addEventListener('blur', () => {
+            if (!isHandled) {
+                isHandled = true;
+                onSave();
+            }
+        });
+    };
+    
     // Función: Crear nueva lista
     const createNewList = () => {
         const colors = ['#04fc57', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#a8e6cf', '#ff8a80'];
@@ -116,21 +170,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentName = lists[listId].name;
         
         // Crear input de edición
-        const editInput = document.createElement('input');
-        editInput.type = 'text';
-        editInput.value = currentName;
-        editInput.style.cssText = `
-            background: transparent;
-            border: 2px solid #04fc57;
-            border-radius: 8px;
-            color: white;
-            padding: 4px 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            outline: none;
-            width: 100%;
-            font-family: "Jost", sans-serif;
-        `;
+        const editInput = createEditInput(currentName, {
+            width: '100%'
+        });
         
         // Reemplazar el span con el input
         nameSpan.replaceWith(editInput);
@@ -186,31 +228,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         
-        // Eventos para guardar o cancelar
-        let isHandled = false;
-        
-        editInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !isHandled) {
-                e.preventDefault();
-                isHandled = true;
-                saveEdit();
-            }
-        });
-        
-        editInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !isHandled) {
-                e.preventDefault();
-                isHandled = true;
-                cancelEdit();
-            }
-        });
-        
-        editInput.addEventListener('blur', () => {
-            if (!isHandled) {
-                isHandled = true;
-                saveEdit();
-            }
-        });
+        // Manejar eventos de edición
+        handleEditInputEvents(editInput, saveEdit, cancelEdit);
         
         // Prevenir que el click en el input cambie de lista
         editInput.addEventListener('click', (e) => {
@@ -246,26 +265,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función: Renombrar lista actual
     const renameCurrentList = () => {
         const currentName = lists[currentListId].name;
+        const currentElement = document.getElementById('current-list-name');
+        if (!currentElement) return;
         
-        // Crear input de edición
-        const editInput = document.createElement('input');
-        editInput.type = 'text';
-        editInput.value = currentName;
-        editInput.style.cssText = `
-            background: transparent;
-            border: 2px solid #04fc57;
-            border-radius: 15px;
-            color: white;
-            padding: 8px 15px;
-            font-size: 2.2rem;
-            font-weight: 600;
-            outline: none;
-            width: 100%;
-            font-family: "Jost", sans-serif;
-        `;
+        // Crear input de edición con estilos personalizados para el header
+        const editInput = createEditInput(currentName, {
+            borderRadius: '15px',
+            padding: '8px 15px',
+            fontSize: '2.2rem',
+            fontWeight: '600',
+            width: '100%'
+        });
         
         // Reemplazar el h1 con el input
-        currentListName.replaceWith(editInput);
+        currentElement.replaceWith(editInput);
         editInput.focus();
         editInput.select();
         
@@ -301,31 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         
-        // Eventos para guardar o cancelar
-        let isHandled = false;
-        
-        editInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !isHandled) {
-                e.preventDefault();
-                isHandled = true;
-                saveEdit();
-            }
-        });
-        
-        editInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !isHandled) {
-                e.preventDefault();
-                isHandled = true;
-                cancelEdit();
-            }
-        });
-        
-        editInput.addEventListener('blur', () => {
-            if (!isHandled) {
-                isHandled = true;
-                saveEdit();
-            }
-        });
+        // Manejar eventos de edición
+        handleEditInputEvents(editInput, saveEdit, cancelEdit);
     };
     
     // Función: Eliminar lista actual
