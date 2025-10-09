@@ -53,6 +53,60 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('todoLists', JSON.stringify(lists));
     };
     
+    // Función auxiliar: Crear input de edición con estilos
+    const createEditInput = (value, styles = {}) => {
+        const editInput = document.createElement('input');
+        editInput.type = 'text';
+        editInput.value = value;
+        
+        const defaultStyles = {
+            background: 'transparent',
+            border: '2px solid #04fc57',
+            borderRadius: '8px',
+            color: 'white',
+            padding: '4px 8px',
+            fontSize: '1rem',
+            fontWeight: '500',
+            outline: 'none',
+            fontFamily: '"Jost", sans-serif',
+            ...styles
+        };
+        
+        editInput.style.cssText = Object.entries(defaultStyles)
+            .map(([key, value]) => `${key.replace(/[A-Z]/g, m => '-' + m.toLowerCase())}: ${value}`)
+            .join('; ');
+        
+        return editInput;
+    };
+    
+    // Función auxiliar: Manejar eventos de edición (guardar/cancelar)
+    const handleEditInputEvents = (input, onSave, onCancel) => {
+        let isHandled = false;
+        
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !isHandled) {
+                e.preventDefault();
+                isHandled = true;
+                onSave();
+            }
+        });
+        
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !isHandled) {
+                e.preventDefault();
+                isHandled = true;
+                onCancel();
+            }
+        });
+        
+        input.addEventListener('blur', () => {
+            if (!isHandled) {
+                isHandled = true;
+                onSave();
+            }
+        });
+    };
+    
     // Función: Crear nueva lista
     const createNewList = () => {
         const colors = ['#04fc57', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#a8e6cf', '#ff8a80'];
@@ -60,19 +114,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const availableColors = colors.filter(color => !usedColors.includes(color));
         const selectedColor = availableColors.length > 0 ? availableColors[0] : colors[Math.floor(Math.random() * colors.length)];
         
-        const listName = prompt('¿Cómo quieres llamar a tu nueva lista?', 'Nueva Lista');
-        if (listName && listName.trim()) {
-            const newListId = 'list_' + Date.now();
-            lists[newListId] = {
-                id: newListId,
-                name: listName.trim(),
-                color: selectedColor,
-                tasks: []
-            };
-            saveLists();
-            renderLists();
-            switchToList(newListId);
-        }
+        // Crear nueva lista con nombre temporal
+        const newListId = 'list_' + Date.now();
+        lists[newListId] = {
+            id: newListId,
+            name: 'Nueva Lista',
+            color: selectedColor,
+            tasks: []
+        };
+        saveLists();
+        renderLists();
+        switchToList(newListId);
+        
+        // Activar edición automática del nombre en el header
+        setTimeout(() => {
+            renameCurrentList();
+        }, 100);
     };
     
     // Función: Renderizar lista de listas en sidebar
@@ -89,8 +146,94 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="list-count">${list.tasks.filter(task => !task.completed).length}</span>
             `;
             
-            listItem.addEventListener('click', () => switchToList(list.id));
+            // Click para cambiar de lista
+            listItem.addEventListener('click', (e) => {
+                // No cambiar de lista si se está editando
+                if (!e.target.closest('input')) {
+                    switchToList(list.id);
+                }
+            });
+            
+            // Doble click en el nombre para editar
+            const listNameSpan = listItem.querySelector('.list-name');
+            listNameSpan.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                editListNameInSidebar(list.id, listNameSpan);
+            });
+            
             listsContainer.appendChild(listItem);
+        });
+    };
+    
+    // Función: Editar nombre de lista en sidebar
+    const editListNameInSidebar = (listId, nameSpan) => {
+        const currentName = lists[listId].name;
+        
+        // Crear input de edición
+        const editInput = createEditInput(currentName, {
+            width: '100%'
+        });
+        
+        // Reemplazar el span con el input
+        nameSpan.replaceWith(editInput);
+        editInput.focus();
+        editInput.select();
+        
+        // Función para guardar cambios
+        const saveEdit = () => {
+            const newName = editInput.value.trim();
+            const newSpan = document.createElement('span');
+            newSpan.className = 'list-name';
+            
+            if (newName !== '' && editInput.parentNode) {
+                // Guardar el nuevo nombre
+                lists[listId].name = newName;
+                newSpan.textContent = newName;
+                saveLists();
+                
+                // Actualizar el título si es la lista actual
+                if (listId === currentListId) {
+                    const titleElement = document.getElementById('current-list-name');
+                    if (titleElement) {
+                        titleElement.textContent = newName;
+                    }
+                }
+            } else {
+                // Restaurar el nombre original si está vacío
+                newSpan.textContent = currentName;
+            }
+            
+            editInput.replaceWith(newSpan);
+            
+            // Re-agregar el evento de doble click
+            newSpan.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                editListNameInSidebar(listId, newSpan);
+            });
+        };
+        
+        // Función para cancelar edición
+        const cancelEdit = () => {
+            if (editInput.parentNode) {
+                const newSpan = document.createElement('span');
+                newSpan.className = 'list-name';
+                newSpan.textContent = currentName;
+                editInput.replaceWith(newSpan);
+                
+                // Re-agregar el evento de doble click
+                newSpan.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    editListNameInSidebar(listId, newSpan);
+                });
+            }
+        };
+        
+        // Manejar eventos de edición
+        handleEditInputEvents(editInput, saveEdit, cancelEdit);
+        
+        // Prevenir que el click en el input cambie de lista
+        editInput.addEventListener('click', (e) => {
+            e.stopPropagation();
         });
     };
     
@@ -98,7 +241,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const switchToList = (listId) => {
         if (lists[listId]) {
             currentListId = listId;
-            currentListName.textContent = lists[currentListId].name;
+            
+            // Actualizar el nombre de la lista - buscar el elemento actual
+            const titleElement = document.getElementById('current-list-name');
+            if (titleElement) {
+                titleElement.textContent = lists[currentListId].name;
+            }
             
             // Actualizar lista activa en sidebar
             document.querySelectorAll('.list-item').forEach(item => {
@@ -116,13 +264,58 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Función: Renombrar lista actual
     const renameCurrentList = () => {
-        const newName = prompt('Nuevo nombre para la lista:', lists[currentListId].name);
-        if (newName && newName.trim()) {
-            lists[currentListId].name = newName.trim();
-            saveLists();
-            renderLists();
-            currentListName.textContent = newName.trim();
-        }
+        const currentName = lists[currentListId].name;
+        const currentElement = document.getElementById('current-list-name');
+        if (!currentElement) return;
+        
+        // Crear input de edición con estilos personalizados para el header
+        const editInput = createEditInput(currentName, {
+            borderRadius: '15px',
+            padding: '8px 15px',
+            fontSize: '2.2rem',
+            fontWeight: '600',
+            width: '100%'
+        });
+        
+        // Reemplazar el h1 con el input
+        currentElement.replaceWith(editInput);
+        editInput.focus();
+        editInput.select();
+        
+        // Función para guardar cambios
+        const saveEdit = () => {
+            const newName = editInput.value.trim();
+            const newH1 = document.createElement('h1');
+            newH1.id = 'current-list-name';
+            newH1.style.cssText = 'font-size: 2.2rem; font-weight: 600; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); margin: 0; flex: 1;';
+            
+            if (newName !== '' && editInput.parentNode) {
+                // Guardar el nuevo nombre
+                lists[currentListId].name = newName;
+                newH1.textContent = newName;
+                saveLists();
+                renderLists();
+            } else {
+                // Restaurar el nombre original si está vacío
+                newH1.textContent = currentName;
+            }
+            
+            editInput.replaceWith(newH1);
+        };
+        
+        // Función para cancelar edición
+        const cancelEdit = () => {
+            if (editInput.parentNode) {
+                const newH1 = document.createElement('h1');
+                newH1.id = 'current-list-name';
+                newH1.style.cssText = 'font-size: 2.2rem; font-weight: 600; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); margin: 0; flex: 1;';
+                newH1.textContent = currentName;
+                editInput.replaceWith(newH1);
+            }
+        };
+        
+        // Manejar eventos de edición
+        handleEditInputEvents(editInput, saveEdit, cancelEdit);
     };
     
     // Función: Eliminar lista actual

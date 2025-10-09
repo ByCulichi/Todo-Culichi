@@ -129,6 +129,12 @@ body {
     color: #fff;
     font-size: 1rem;
     font-weight: 500;
+    cursor: text;
+    transition: all 0.2s ease;
+}
+
+.list-name:hover {
+    opacity: 0.8;
 }
 
 .list-count {
