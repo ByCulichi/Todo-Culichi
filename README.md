@@ -1,80 +1,92 @@
 # 🌟 ToDo Culichi
 
-Una moderna aplicación de lista de tareas con una interfaz elegante y funcionalidades avanzadas, desarrollada con **HTML5**, **CSS3** y **JavaScript Vanilla**.
+A modern todo list application with an elegant interface and advanced features, built with **HTML5**, **CSS3**, and **Vanilla JavaScript**.
 
-![Todo App - Estado Inicial](https://github.com/user-attachments/assets/e5cf3ba6-b958-43dc-b1f4-bb5be3b8c6cf)
+## 🌐 Live Demo
 
-![Todo App - Tareas Completadas](https://github.com/user-attachments/assets/fbf36bfa-0979-463f-addc-7f0da89cf130)
-
----
-
-## ✨ Características Principales
-
-### 🎯 Gestión de Tareas
-- **Agregar tareas**: Interfaz intuitiva para crear nuevas tareas
-- **Marcar como completadas**: Sistema de checkbox con animaciones suaves
-- **Editar tareas**: Funcionalidad de edición en línea
-- **Eliminar tareas**: Botón de eliminación con confirmación visual
-
-### 📊 Seguimiento de Progreso
-- **Barra de progreso dinámica**: Visualización en tiempo real del progreso
-- **Contador de tareas**: Muestra tareas completadas vs. total (ej: 2/5)
-- **Mensajes contextuales**: Retroalimentación inteligente en español
-- **Animación de celebración**: Confeti animado al completar todas las tareas
-
-### 💾 Persistencia de Datos
-- **Local Storage**: Las tareas se guardan automáticamente en el navegador
-- **Recuperación automática**: Restaura tareas al recargar la página
-
-### 🎨 Diseño Moderno
-- **Tema cósmico**: Fondo espacial con efectos de glassmorphism
-- **Interfaz responsive**: Adaptable a diferentes tamaños de pantalla
-- **Animaciones suaves**: Transiciones fluidas y efectos visuales
-- **Estado vacío elegante**: Imagen decorativa cuando no hay tareas
+**[Try it here: https://byculichi.github.io/Todo-Culichi/](https://byculichi.github.io/Todo-Culichi/)**
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## 📸 Screenshots
 
-- **HTML5** - Estructura semántica y accesible
-- **CSS3** - Estilos modernos con:
-  - Gradientes y efectos glassmorphism
-  - Animaciones y transiciones CSS
-  - Diseño responsivo con Flexbox
-  - Fuentes de Google Fonts (Jost, Poppins)
-- **JavaScript (Vanilla)** - Lógica de aplicación incluyendo:
-  - Manipulación del DOM
-  - Gestión de eventos
+![Todo App - Initial State](https://github.com/user-attachments/assets/e5cf3ba6-b958-43dc-b1f4-bb5be3b8c6cf)
+
+![Todo App - Completed Tasks](https://github.com/user-attachments/assets/fbf36bfa-0979-463f-addc-7f0da89cf130)
+
+![Todo App Demo](Todoapp.gif)
+
+---
+
+## ✨ Key Features
+
+### 🎯 Task Management
+- **Add tasks**: Intuitive interface to create new tasks
+- **Mark as completed**: Checkbox system with smooth animations
+- **Edit tasks**: Inline editing functionality
+- **Delete tasks**: Deletion button with visual confirmation
+
+### 📊 Progress Tracking
+- **Dynamic progress bar**: Real-time progress visualization
+- **Task counter**: Shows completed tasks vs. total (e.g., 2/5)
+- **Contextual messages**: Smart feedback messages
+- **Celebration animation**: Animated confetti when all tasks are completed
+
+### 💾 Data Persistence
+- **Local Storage**: Tasks are automatically saved in the browser
+- **Auto-recovery**: Restores tasks when the page is reloaded
+
+### 🎨 Modern Design
+- **Cosmic theme**: Space background with glassmorphism effects
+- **Responsive interface**: Adapts to different screen sizes
+- **Smooth animations**: Fluid transitions and visual effects
+- **Elegant empty state**: Decorative image when there are no tasks
+
+---
+
+## 🛠️ Technologies Used
+
+- **HTML5** - Semantic and accessible structure
+- **CSS3** - Modern styling with:
+  - Gradients and glassmorphism effects
+  - CSS animations and transitions
+  - Responsive design with Flexbox
+  - Google Fonts (Jost, Poppins)
+- **JavaScript (Vanilla)** - Application logic including:
+  - DOM manipulation
+  - Event handling
   - Local Storage API
-  - Animaciones dinámicas
+  - Dynamic animations
 
 ---
 
-## 🚀 Demo en Vivo
+## 🚀 Getting Started
 
-Puedes probar la aplicación directamente abriendo el archivo `index.html` en tu navegador web favorito.
-
----
-
-## 📱 Características de Usabilidad
-
-- **Atajos de teclado**: Presiona Enter para agregar tareas rápidamente
-- **Feedback visual**: Mensajes dinámicos que guían al usuario
-- **Estados de interfaz**: Diferentes vistas según el progreso de tareas
-- **Accesibilidad**: Controles accesibles y navegación por teclado
+You can try the application by:
+1. Visiting the [live demo](https://byculichi.github.io/Todo-Culichi/)
+2. Or opening the `index.html` file directly in your favorite web browser
 
 ---
 
-## 🎉 Experiencia de Usuario
+## 📱 Usability Features
 
-La aplicación ofrece mensajes motivacionales personalizados:
-- `"Add your first task!"` - Estado inicial
-- `"Tienes X tarea(s) pendiente(s)"` - Con tareas sin completar  
-- `"¡Vas bien! Te quedan X tarea(s)"` - Progreso parcial
-- `"¡Felicidades, completaste todas tus tareas! 🎉"` - Todas completadas
+- **Keyboard shortcuts**: Press Enter to quickly add tasks
+- **Visual feedback**: Dynamic messages that guide the user
+- **Interface states**: Different views based on task progress
+- **Accessibility**: Accessible controls and keyboard navigation
 
 ---
 
-## 👨‍💻 Sobre el Proyecto
+## 🎉 User Experience
 
-Este proyecto forma parte de mi portafolio personal, demostrando habilidades en desarrollo frontend moderno con tecnologías web estándar. La aplicación combina funcionalidad práctica con un diseño visual atractivo y una experiencia de usuario pulida.
+The application offers personalized motivational messages:
+- `"Add your first task!"` - Initial state
+- `"You have X pending task(s)"` - With uncompleted tasks
+- `"You're doing great! X task(s) remaining"` - Partial progress
+- `"Congratulations, you completed all your tasks! 🎉"` - All completed
+
+---
+
+## 👨‍💻 About the Project
+
+This project is part of my personal portfolio, demonstrating skills in modern frontend development with standard web technologies. The application combines practical functionality with an attractive visual design and polished user experience.
